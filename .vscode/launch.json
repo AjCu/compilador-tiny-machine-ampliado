@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Attach",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": "<debug port of the debuggee>"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
@@ -15,10 +22,10 @@
             "name": "parser",
             "request": "launch",
             "args": [
-                "C:/Development/Personal AJCU/UNET/proyecto-compiladores-2025-tiny-ampliado/ejemplo_fuente/operaciones.tny"
+                "C:/Development/Personal AJCU/UNET/compilador-tiny-machine-ampliado/ejemplo_fuente/operaciones.tny"
             ],
             "mainClass": "comp.parser",
-            "projectName": "proyecto-compiladores-2025-tiny-ampliado_f32c09b2"
+            "projectName": "compilador-tiny-machine-ampliado_4ebf3df0"
         }
     ]
 }
