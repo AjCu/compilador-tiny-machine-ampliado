@@ -64,6 +64,8 @@ public class Generador {
 			generarIf(nodo);
 		}else if (nodo instanceof  NodoRepeat){
 			generarRepeat(nodo);
+		}else if (nodo instanceof  NodoFor){
+			generarFor(nodo);
 		}else if (nodo instanceof  NodoAsignacion){
 			generarAsignacion(nodo);
 		}else if (nodo instanceof  NodoLeer){
@@ -126,6 +128,31 @@ public class Generador {
 			generar(n.getPrueba());
 			UtGen.emitirRM_Abs("JEQ", UtGen.AC, localidadSaltoInicio, "repeat: jmp hacia el inicio del cuerpo");
 		if(UtGen.debug)	UtGen.emitirComentario("<- repeat");
+	}		
+
+	private static void generarFor(NodoBase nodo){
+		NodoFor n = (NodoFor)nodo;
+		int localidadSaltoInicio = 0;
+		int localidadSaltoFinal = 0;
+		int localidadActual= 0;
+		if(UtGen.debug)	UtGen.emitirComentario("-> for");
+		/* Genero el codigo de asignacion inicial del for */
+		generar(n.getAsignaP());
+
+		localidadSaltoInicio = UtGen.emitirSalto(0);
+		/* Genero el codigo de la prueba del for */
+		generar(n.getPrueba());
+		localidadSaltoFinal = UtGen.emitirSalto(1);
+		/* Genero el cuerpo del for */
+		generar(n.getCuerpo());
+		/* Genero el codigo de asignacion final del for*/
+		generar(n.getAsignaT());
+		UtGen.emitirRM_Abs("LDA", UtGen.PC, localidadSaltoInicio, "for: jmp hacia el inicio");
+		localidadActual = UtGen.emitirSalto(0);
+		UtGen.cargarRespaldo(localidadSaltoFinal);
+		UtGen.emitirRM_Abs("JEQ", UtGen.AC, localidadActual, "for: jmp hacia el final");
+
+		UtGen.restaurarRespaldo();
 	}		
 	
 	private static void generarAsignacion(NodoBase nodo){
