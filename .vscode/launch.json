@@ -22,7 +22,7 @@
             "name": "parser",
             "request": "launch",
             "args": [
-                "C:/Development/Personal AJCU/UNET/compilador-tiny-machine-ampliado/ejemplo_fuente/operaciones.tny"
+                "C:/Development/Personal AJCU/UNET/compilador-tiny-machine-ampliado/ejemplo_fuente/factorial.tny"
             ],
             "mainClass": "comp.parser",
             "projectName": "compilador-tiny-machine-ampliado_4ebf3df0"
