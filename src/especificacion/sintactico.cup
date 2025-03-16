@@ -1,5 +1,5 @@
 import java_cup.runtime.*;
-import nodosAST.*;
+import comp.nodosAST.*;
 import java.io.InputStreamReader;
 
 
