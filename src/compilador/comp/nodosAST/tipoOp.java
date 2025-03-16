@@ -1,5 +1,5 @@
 package comp.nodosAST;
 
 public enum tipoOp {
-	menor,igual,mas,menos,por,entre
+	menor,igual,mas,menos,por,entre,mayor,menorigual,mayorigual,diferente
 }
