@@ -1,3 +1,5 @@
+package comp;
+
 import java_cup.runtime.*;
 import comp.nodosAST.*;
 import java.io.InputStreamReader;
