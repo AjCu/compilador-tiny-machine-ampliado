@@ -75,6 +75,9 @@ terminal GT;
 terminal LE;
 terminal GE;
 terminal NE;
+terminal AND;
+terminal OR;
+terminal NOT;
 terminal PLUS;
 terminal MINUS;
 terminal TIMES;
@@ -84,6 +87,7 @@ terminal RPAREN;
 terminal SEMI;
 terminal VARINT;
 terminal VARBOOL;
+
 
 /* Simbolos No Terminales */
 non terminal program;
@@ -238,7 +242,16 @@ exp         ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println
 		| simple_exp:exI EQ simple_exp:exD	{: if(debug) System.out.println("\t regla 10f"); 
 							RESULT = new NodoOperacion(exI,tipoOp.igual,exD);
 							:}
-		| simple_exp:ex	{: if(debug) System.out.println("\t regla 10g"); 
+		| simple_exp:exI AND simple_exp:exD	{: if(debug) System.out.println("\t regla 10g"); 
+							RESULT = new NodoOperacion(exI,tipoOp.and,exD);
+							:}
+		| simple_exp:exI OR simple_exp:exD	{: if(debug) System.out.println("\t regla 10h"); 
+							RESULT = new NodoOperacion(exI,tipoOp.or,exD);
+							:}
+		| simple_exp:exI NOT simple_exp:exD	{: if(debug) System.out.println("\t regla 10i"); 
+							RESULT = new NodoOperacion(exI,tipoOp.not,exD);
+							:}
+		| simple_exp:ex	{: if(debug) System.out.println("\t regla 10j"); 
 					RESULT = ex;
 					:}
 		;
