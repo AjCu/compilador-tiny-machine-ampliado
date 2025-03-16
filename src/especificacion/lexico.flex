@@ -50,6 +50,8 @@ digito		= [0-9]
 numero		= {digito}+
 letra			= [a-zA-Z]
 identificador	= {letra}+
+varInt           = (int|INT)
+varBool           = (boolean|BOOLEAN)
 nuevalinea		= \n | \n\r | \r\n
 espacio		= [ \t]+
 %%
@@ -116,6 +118,12 @@ espacio		= [ \t]+
 {numero}        {	if(debug) System.out.println("token NUM");
 			return sf.newSymbol("NUM",sym.NUM,new String(yytext()));
 			}
+{varInt}        {	if(debug) System.out.println("token VARINT");
+			return sf.newSymbol("VARINT",sym.VARINT,new String(yytext()));
+			}
+{varBool}        {	if(debug) System.out.println("token VARBOOL");
+			return sf.newSymbol("VARBOOL",sym.VARBOOL,new String(yytext()));
+			}			
 {identificador}	{	if(debug) System.out.println("token ID");
 				return sf.newSymbol("ID",sym.ID,new String(yytext()));
 			}

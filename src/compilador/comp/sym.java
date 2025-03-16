@@ -13,6 +13,7 @@ public class sym {
   public static final int OVER = 20;
   public static final int LT = 16;
   public static final int ELSE = 4;
+  public static final int VARBOOL = 25;
   public static final int PLUS = 17;
   public static final int RPAREN = 22;
   public static final int THEN = 3;
@@ -30,6 +31,7 @@ public class sym {
   public static final int ASSIGN = 14;
   public static final int EQ = 15;
   public static final int FOR = 8;
+  public static final int VARINT = 24;
   public static final int REPEAT = 6;
   public static final int ENDFOR = 9;
   public static final String[] terminalNames = new String[] {
@@ -56,7 +58,9 @@ public class sym {
   "OVER",
   "LPAREN",
   "RPAREN",
-  "SEMI"
+  "SEMI",
+  "VARINT",
+  "VARBOOL"
   };
 }
 

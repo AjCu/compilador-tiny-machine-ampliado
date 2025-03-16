@@ -3,6 +3,7 @@ package comp;
 import java_cup.runtime.*;
 import comp.nodosAST.*;
 import java.io.InputStreamReader;
+import java.util.Hashtable;
 
 
 parser code {:
@@ -39,11 +40,17 @@ action code {:
 	private boolean debug=true;
 	private NodoBase ast=null;
 	private int lineanum=0;
-	
+	Hashtable table = new Hashtable(); //Se guardan todas las declaraciones de variables;
 	//Debe ser llamada solo despues de un parse(), en caso contrario retornara null siempre;
 	public NodoBase getASTroot(){
 		return ast;
 	}
+	public void syntax_error(String token) throws Exception {
+			parser lr_par = new parser();
+			lr_par.done_parsing();
+			lr_par.report_error("Variable "+ token+ " no declarada  ", token);
+		throw new Exception("Error de Sintaxis");
+     }
 	
 :}
 
@@ -71,6 +78,8 @@ terminal OVER;
 terminal LPAREN;
 terminal RPAREN;
 terminal SEMI;
+terminal VARINT;
+terminal VARBOOL;
 
 /* Simbolos No Terminales */
 non terminal program;
@@ -159,17 +168,35 @@ for_stmt ::= FOR assign_stmt:asignap SEMI exp:prueba SEMI assign_stmt:asignat SE
   					:}
    		;
 
-assign_stmt ::= ID:variable 	{: if(debug) System.out.println("\t regla 7 parte del medio"); 
-				/*lineanum=1000; //Pasar/Obtener la linea correcta por el Simbolo
-				String nombre = variable.getName();*/
-				:}
-			ASSIGN exp:ex	{: if(debug) System.out.println("\t regla 7 parte final");
-					if(variable!=null)
-					RESULT = new NodoAsignacion(variable.toString(),ex);
-					else{
-					RESULT = null;
-					System.out.println("Ocurrio error en cup # 0001");
-					}
+assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regla 7 variable INT");
+                				table.put(variable,variable);
+                				:}
+                    |VARINT:var ID:variable ASSIGN exp:ex {:
+                            if(debug) System.out.println("\t regla 7 variable INT parte final");
+                            if(variable!=null){
+                            table.put(variable,variable);
+                            RESULT = new NodoAsignacion(variable.toString(),ex);
+                            }
+                            else{
+                            RESULT = null;
+                            System.out.println("Ocurrio error en cup # 0001");
+                            }
+                    :}
+					| ID:variable 	{: if(debug) System.out.println("\t regla 7 parte del medio "+ table.get(variable));
+				            String value = (String) table.get(variable);
+                            if(value == null){
+                                syntax_error(variable);
+                            	System.out.println("Variable no declarada");
+                            	RESULT = null;
+                            }
+					:}
+					ASSIGN exp:ex	{: if(debug) System.out.println("\t regla 7 parte final");
+							if(variable!=null)
+							RESULT = new NodoAsignacion(variable.toString(),ex);
+							else{
+							RESULT = null;
+							System.out.println("Ocurrio error en cup # 0001");
+							}
 					:}
 		;
 
