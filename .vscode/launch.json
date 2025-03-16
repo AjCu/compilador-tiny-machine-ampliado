@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CrearCup",
+            "request": "launch",
+            "mainClass": "comp.CrearCup",
+            "projectName": "compilador-tiny-machine-ampliado_4ebf3df0"
+        },
+        {
+            "type": "java",
+            "name": "CrearLexico",
+            "request": "launch",
+            "mainClass": "comp.CrearLexico",
+            "projectName": "compilador-tiny-machine-ampliado_4ebf3df0"
+        },
+        {
+            "type": "java",
             "name": "Attach",
             "request": "attach",
             "hostName": "localhost",
@@ -22,7 +36,7 @@
             "name": "parser",
             "request": "launch",
             "args": [
-                "C:/Development/Personal AJCU/UNET/compilador-tiny-machine-ampliado/ejemplo_fuente/factorial.tny"
+                "C:/Development/Personal AJCU/UNET/compilador-tiny-machine-ampliado/ejemplo_fuente/for.tny"
             ],
             "mainClass": "comp.parser",
             "projectName": "compilador-tiny-machine-ampliado_4ebf3df0"

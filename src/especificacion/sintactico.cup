@@ -1,6 +1,9 @@
+package comp;
+
 import java_cup.runtime.*;
-import nodosAST.*;
+import comp.nodosAST.*;
 import java.io.InputStreamReader;
+import java.util.Hashtable;
 
 
 parser code {:
@@ -37,11 +40,17 @@ action code {:
 	private boolean debug=true;
 	private NodoBase ast=null;
 	private int lineanum=0;
-	
+	Hashtable table = new Hashtable(); //Se guardan todas las declaraciones de variables;
 	//Debe ser llamada solo despues de un parse(), en caso contrario retornara null siempre;
 	public NodoBase getASTroot(){
 		return ast;
 	}
+	public void syntax_error(String token) throws Exception {
+			parser lr_par = new parser();
+			lr_par.done_parsing();
+			lr_par.report_error("Variable "+ token+ " no declarada  ", token);
+		throw new Exception("Error de Sintaxis");
+     }
 	
 :}
 
@@ -53,6 +62,8 @@ terminal ELSE;
 terminal END;
 terminal REPEAT;
 terminal UNTIL;
+terminal FOR;
+terminal ENDFOR;
 terminal READ;
 terminal WRITE;
 terminal String ID;
@@ -67,6 +78,8 @@ terminal OVER;
 terminal LPAREN;
 terminal RPAREN;
 terminal SEMI;
+terminal VARINT;
+terminal VARBOOL;
 
 /* Simbolos No Terminales */
 non terminal program;
@@ -74,6 +87,7 @@ non terminal NodoBase stmt_seq;
 non terminal NodoBase stmt;
 non terminal NodoBase if_stmt;
 non terminal NodoBase repeat_stmt;
+non terminal NodoBase for_stmt;
 non terminal NodoBase assign_stmt;
 non terminal NodoBase read_stmt;
 non terminal NodoBase write_stmt;
@@ -117,16 +131,19 @@ stmt        ::= if_stmt:sif	{: if(debug) System.out.println("\t regla 3a");
             | repeat_stmt:srep	{: if(debug) System.out.println("\t regla 3b"); 
 						RESULT=srep;
 						:}
-            | assign_stmt:sasi	{: if(debug) System.out.println("\t regla 3c"); 
+			| for_stmt:sfor	{: if(debug) System.out.println("\t regla 3c");
+                        RESULT=sfor;
+                        :}			
+            | assign_stmt:sasi	{: if(debug) System.out.println("\t regla 3d"); 
 						RESULT=sasi;
 						:}
-            | read_stmt:slec	{: if(debug) System.out.println("\t regla 3d"); 
+            | read_stmt:slec	{: if(debug) System.out.println("\t regla 3e"); 
 					RESULT=slec;
 					:}
-            | write_stmt:sesc	{: if(debug) System.out.println("\t regla 3e"); 
+            | write_stmt:sesc	{: if(debug) System.out.println("\t regla 3f"); 
 					RESULT=sesc;
 					:}
-            | error	{: if(debug) System.out.println("\t regla 3f"); 
+            | error	{: if(debug) System.out.println("\t regla 3g"); 
 				System.out.println("Ocurrio error en cup # 0004");
 				RESULT=null;
 				:}
@@ -145,21 +162,45 @@ repeat_stmt ::= REPEAT stmt_seq:cuerpo UNTIL exp:prueba	{: if(debug) System.out.
 							:}
 		;
 
-assign_stmt ::= ID:variable 	{: if(debug) System.out.println("\t regla 6 parte del medio"); 
-				/*lineanum=1000; //Pasar/Obtener la linea correcta por el Simbolo
-				String nombre = variable.getName();*/
-				:}
-			ASSIGN exp:ex	{: if(debug) System.out.println("\t regla 6 parte final");
-					if(variable!=null)
-					RESULT = new NodoAsignacion(variable.toString(),ex);
-					else{
-					RESULT = null;
-					System.out.println("Ocurrio error en cup # 0001");
-					}
+for_stmt ::= FOR assign_stmt:asignap SEMI exp:prueba SEMI assign_stmt:asignat SEMI  THEN stmt_seq:cuerpo END  {:
+                            if(debug) System.out.println("\t regla 6");
+   							RESULT = new NodoFor(asignap,prueba,asignat,cuerpo);
+  					:}
+   		;
+
+assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regla 7 variable INT");
+                				table.put(variable,variable);
+                				:}
+                    |VARINT:var ID:variable ASSIGN exp:ex {:
+                            if(debug) System.out.println("\t regla 7 variable INT parte final");
+                            if(variable!=null){
+                            table.put(variable,variable);
+                            RESULT = new NodoAsignacion(variable.toString(),ex);
+                            }
+                            else{
+                            RESULT = null;
+                            System.out.println("Ocurrio error en cup # 0001");
+                            }
+                    :}
+					| ID:variable 	{: if(debug) System.out.println("\t regla 7 parte del medio "+ table.get(variable));
+				            String value = (String) table.get(variable);
+                            if(value == null){
+                                syntax_error(variable);
+                            	System.out.println("Variable no declarada");
+                            	RESULT = null;
+                            }
+					:}
+					ASSIGN exp:ex	{: if(debug) System.out.println("\t regla 7 parte final");
+							if(variable!=null)
+							RESULT = new NodoAsignacion(variable.toString(),ex);
+							else{
+							RESULT = null;
+							System.out.println("Ocurrio error en cup # 0001");
+							}
 					:}
 		;
 
-read_stmt   ::= READ ID:variable	{: if(debug) System.out.println("\t regla 7"); 
+read_stmt   ::= READ ID:variable	{: if(debug) System.out.println("\t regla 8"); 
 					System.out.println("Leyendo Variable");
 					if(variable!=null)
 					RESULT = new NodoLeer(variable.toString());
@@ -170,48 +211,48 @@ read_stmt   ::= READ ID:variable	{: if(debug) System.out.println("\t regla 7");
 					:}
 		;
 
-write_stmt  ::= WRITE exp:ex	{: if(debug) System.out.println("\t regla 8"); 
+write_stmt  ::= WRITE exp:ex	{: if(debug) System.out.println("\t regla 9"); 
 					RESULT= new NodoEscribir(ex);
 					:}
 		;
 
-exp         ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println("\t regla 9a"); 
+exp         ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println("\t regla 10a"); 
 								RESULT = new NodoOperacion(exI,tipoOp.menor,exD);
 								:} 
-		| simple_exp:exI EQ simple_exp:exD	{: if(debug) System.out.println("\t regla 9b"); 
+		| simple_exp:exI EQ simple_exp:exD	{: if(debug) System.out.println("\t regla 10b"); 
 							RESULT = new NodoOperacion(exI,tipoOp.igual,exD);
 							:}
-		| simple_exp:ex	{: if(debug) System.out.println("\t regla 9c"); 
+		| simple_exp:ex	{: if(debug) System.out.println("\t regla 10c"); 
 					RESULT = ex;
 					:}
 		;
 
-simple_exp  ::= simple_exp:exI PLUS term:exD	{: if(debug) System.out.println("\t regla 10a"); 
+simple_exp  ::= simple_exp:exI PLUS term:exD	{: if(debug) System.out.println("\t regla 11a"); 
 							RESULT = new NodoOperacion(exI,tipoOp.mas,exD);
 							:}
-		| simple_exp:exI MINUS term:exD	{: if(debug) System.out.println("\t regla 10b"); 
+		| simple_exp:exI MINUS term:exD	{: if(debug) System.out.println("\t regla 11b"); 
 							RESULT = new NodoOperacion(exI,tipoOp.menos,exD);
 							:}
-		| term:ex	{: if(debug) System.out.println("\t regla 10c"); 
+		| term:ex	{: if(debug) System.out.println("\t regla 11c"); 
 				RESULT=ex;
 				:}
 		;
 
-term        ::= term:exI TIMES factor:exD	{: if(debug) System.out.println("\t regla 11a"); 
+term        ::= term:exI TIMES factor:exD	{: if(debug) System.out.println("\t regla 12a"); 
 							RESULT = new NodoOperacion(exI,tipoOp.por,exD);
 							:}
-		| term:exI OVER factor:exD	{: if(debug) System.out.println("\t regla 11b"); 
+		| term:exI OVER factor:exD	{: if(debug) System.out.println("\t regla 12b"); 
 						RESULT = new NodoOperacion(exI,tipoOp.entre,exD);
 						:}
-		| factor:ex	{: if(debug) System.out.println("\t regla 11c"); 
+		| factor:ex	{: if(debug) System.out.println("\t regla 12c"); 
 					RESULT=ex;
 					:}
 		;
 
-factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 12a"); 
+factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 13a"); 
 							RESULT = ex;
 							:}
-		| NUM:valor	{: if(debug) System.out.println("\t regla 12b"); 
+		| NUM:valor	{: if(debug) System.out.println("\t regla 13b"); 
 					System.out.println("Devolvi nodo numero entero");
 					if(valor!=null){
 						RESULT= new NodoValor(Integer.parseInt(valor));
@@ -220,7 +261,7 @@ factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 1
 						System.out.println("Ocurrio error en cup # 0005");
 					}
 					:}
-		| ID:variable	{: if(debug) System.out.println("\t regla 12c"); 
+		| ID:variable	{: if(debug) System.out.println("\t regla 13c"); 
 					if(variable!=null){
 						System.out.println("Construyendo Nodo ID para Lexema: "+ variable.toString());
 						RESULT= new NodoIdentificador(variable.toString());		
@@ -229,7 +270,7 @@ factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 1
 						System.out.println("Ocurrio error en cup # 0005");
 					}
 					:}
-		| error	{: if(debug) System.out.println("\t regla 12d"); 
+		| error	{: if(debug) System.out.println("\t regla 13d"); 
 				System.out.println("Ocurrio error en cup # 0003");
 				RESULT=null;
 				:}
