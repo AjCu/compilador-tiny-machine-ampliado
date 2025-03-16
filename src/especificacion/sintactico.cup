@@ -71,6 +71,10 @@ terminal String NUM;
 terminal ASSIGN;
 terminal EQ;
 terminal LT;
+terminal GT;
+terminal LE;
+terminal GE;
+terminal NE;
 terminal PLUS;
 terminal MINUS;
 terminal TIMES;
@@ -219,10 +223,22 @@ write_stmt  ::= WRITE exp:ex	{: if(debug) System.out.println("\t regla 9");
 exp         ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println("\t regla 10a"); 
 								RESULT = new NodoOperacion(exI,tipoOp.menor,exD);
 								:} 
-		| simple_exp:exI EQ simple_exp:exD	{: if(debug) System.out.println("\t regla 10b"); 
+		| simple_exp:exI GT simple_exp:exD	{: if(debug) System.out.println("\t regla 10b"); 
+							RESULT = new NodoOperacion(exI,tipoOp.mayor,exD);
+							:}
+		| simple_exp:exI LE simple_exp:exD	{: if(debug) System.out.println("\t regla 10c"); 
+							RESULT = new NodoOperacion(exI,tipoOp.menorigual,exD);
+							:}
+		| simple_exp:exI GE simple_exp:exD	{: if(debug) System.out.println("\t regla 10d"); 
+							RESULT = new NodoOperacion(exI,tipoOp.mayorigual,exD);
+							:}
+		| simple_exp:exI NE simple_exp:exD	{: if(debug) System.out.println("\t regla 10e"); 
+							RESULT = new NodoOperacion(exI,tipoOp.diferente,exD);
+							:}
+		| simple_exp:exI EQ simple_exp:exD	{: if(debug) System.out.println("\t regla 10f"); 
 							RESULT = new NodoOperacion(exI,tipoOp.igual,exD);
 							:}
-		| simple_exp:ex	{: if(debug) System.out.println("\t regla 10c"); 
+		| simple_exp:ex	{: if(debug) System.out.println("\t regla 10g"); 
 					RESULT = ex;
 					:}
 		;
