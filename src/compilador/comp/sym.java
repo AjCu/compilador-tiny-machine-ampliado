@@ -8,34 +8,37 @@ package comp;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int TIMES = 23;
+  public static final int TIMES = 26;
+  public static final int AND = 21;
   public static final int READ = 10;
-  public static final int OVER = 24;
+  public static final int OVER = 27;
   public static final int NE = 20;
   public static final int LT = 16;
   public static final int ELSE = 4;
-  public static final int VARBOOL = 29;
-  public static final int PLUS = 21;
-  public static final int RPAREN = 26;
+  public static final int VARBOOL = 32;
+  public static final int PLUS = 24;
+  public static final int RPAREN = 29;
+  public static final int OR = 22;
   public static final int THEN = 3;
-  public static final int SEMI = 27;
+  public static final int SEMI = 30;
+  public static final int NOT = 23;
   public static final int END = 5;
   public static final int IF = 2;
-  public static final int LPAREN = 25;
+  public static final int LPAREN = 28;
   public static final int GT = 17;
   public static final int LE = 18;
   public static final int WRITE = 11;
   public static final int ID = 12;
   public static final int NUM = 13;
   public static final int EOF = 0;
-  public static final int MINUS = 22;
+  public static final int MINUS = 25;
   public static final int GE = 19;
   public static final int error = 1;
   public static final int UNTIL = 7;
   public static final int ASSIGN = 14;
   public static final int EQ = 15;
   public static final int FOR = 8;
-  public static final int VARINT = 28;
+  public static final int VARINT = 31;
   public static final int REPEAT = 6;
   public static final int ENDFOR = 9;
   public static final String[] terminalNames = new String[] {
@@ -60,6 +63,9 @@ public class sym {
   "LE",
   "GE",
   "NE",
+  "AND",
+  "OR",
+  "NOT",
   "PLUS",
   "MINUS",
   "TIMES",
