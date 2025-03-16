@@ -100,6 +100,8 @@ non terminal NodoBase assign_stmt;
 non terminal NodoBase read_stmt;
 non terminal NodoBase write_stmt;
 non terminal NodoBase exp;
+non terminal NodoBase exp_log;
+non terminal NodoBase exp_not;
 non terminal NodoBase simple_exp;
 non terminal NodoBase term;
 non terminal NodoBase factor;
@@ -157,10 +159,10 @@ stmt        ::= if_stmt:sif	{: if(debug) System.out.println("\t regla 3a");
 				:}
             ;
 
-if_stmt     ::= IF exp:ex THEN stmt_seq:pthen END	{: if(debug) System.out.println("\t regla 4a"); 
+if_stmt     ::= IF exp_log:ex THEN stmt_seq:pthen END	{: if(debug) System.out.println("\t regla 4a"); 
 		RESULT = new NodoIf(ex,pthen);
 		:}
-		| IF exp:ex THEN stmt_seq:pthen ELSE stmt_seq:pelse END	{: if(debug) System.out.println("\t regla 4b"); 
+		| IF exp_log:ex THEN stmt_seq:pthen ELSE stmt_seq:pelse END	{: if(debug) System.out.println("\t regla 4b"); 
 		RESULT = new NodoIf(ex,pthen,pelse);		
 		:}
 		;
@@ -179,7 +181,7 @@ for_stmt ::= FOR assign_stmt:asignap SEMI exp:prueba SEMI assign_stmt:asignat SE
 assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regla 7 variable INT");
                 				table.put(variable,variable);
                 				:}
-                    |VARINT:var ID:variable ASSIGN exp:ex {:
+                    |VARINT:var ID:variable ASSIGN exp_log:ex {:
                             if(debug) System.out.println("\t regla 7 variable INT parte final");
                             if(variable!=null){
                             table.put(variable,variable);
@@ -224,9 +226,31 @@ write_stmt  ::= WRITE exp:ex	{: if(debug) System.out.println("\t regla 9");
 					:}
 		;
 
-exp         ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println("\t regla 10a"); 
-								RESULT = new NodoOperacion(exI,tipoOp.menor,exD);
-								:} 
+exp_log ::=
+    exp_not:exI AND exp_log:exD {:
+            if(debug) System.out.println("\t regla exp_log logica AND");
+            RESULT = new NodoOperacion(exI, tipoOp.and, exD);
+        :}
+    | exp_not:exI OR exp_log:exD {:
+            if(debug) System.out.println("\t regla exp_log logica OR");
+            RESULT = new NodoOperacion(exI, tipoOp.or, exD);
+        :}
+    | exp_not:ex {: RESULT = ex; :}
+    ;
+
+exp_not ::=
+    NOT exp_not:ex {:
+            if(debug) System.out.println("\t regla exp_not");
+           RESULT = new NodoOperacionNot(tipoOp.not, ex);
+        :}
+    | exp:ex {: if(debug) System.out.println("\t regla exp");
+            RESULT = ex;
+        :}
+;
+
+exp          ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println("\t regla 10a"); 
+							RESULT = new NodoOperacion(exI,tipoOp.menor,exD);
+							:} 
 		| simple_exp:exI GT simple_exp:exD	{: if(debug) System.out.println("\t regla 10b"); 
 							RESULT = new NodoOperacion(exI,tipoOp.mayor,exD);
 							:}
@@ -241,15 +265,6 @@ exp         ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println
 							:}
 		| simple_exp:exI EQ simple_exp:exD	{: if(debug) System.out.println("\t regla 10f"); 
 							RESULT = new NodoOperacion(exI,tipoOp.igual,exD);
-							:}
-		| simple_exp:exI AND simple_exp:exD	{: if(debug) System.out.println("\t regla 10g"); 
-							RESULT = new NodoOperacion(exI,tipoOp.and,exD);
-							:}
-		| simple_exp:exI OR simple_exp:exD	{: if(debug) System.out.println("\t regla 10h"); 
-							RESULT = new NodoOperacion(exI,tipoOp.or,exD);
-							:}
-		| simple_exp:exI NOT simple_exp:exD	{: if(debug) System.out.println("\t regla 10i"); 
-							RESULT = new NodoOperacion(exI,tipoOp.not,exD);
 							:}
 		| simple_exp:ex	{: if(debug) System.out.println("\t regla 10j"); 
 					RESULT = ex;

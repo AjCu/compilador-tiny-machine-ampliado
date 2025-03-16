@@ -1,5 +1,5 @@
 int x:=99;
-if (x<=100) AND (x>1) then
+if x<=100 AND x>1 then
   write 100
 else
   write 200
