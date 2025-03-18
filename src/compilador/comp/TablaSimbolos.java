@@ -18,12 +18,33 @@ public class TablaSimbolos {
 		direccion=0;
 	}
 
-	public void cargarTabla(NodoBase raiz){
+	public void cargarTabla(NodoBase raiz) throws Exception{
 		while (raiz != null) {
 	    if (raiz instanceof NodoIdentificador){
 	    	InsertarSimbolo(((NodoIdentificador)raiz).getNombre(),-1);
 	    	//TODO: A�adir el numero de linea y localidad de memoria correcta
 	    }
+		else if(raiz instanceof NodoVector){
+			NodoVector vector = (NodoVector)raiz;
+			boolean inserto = false;
+			if(vector.isDeclaracion()){
+				cargarTabla(vector.getExpresion());
+				int direccionesReservadas = ((NodoValor)vector.getExpresion()).getValor();
+				if(BuscarSimbolo(((NodoIdentificador)vector.getIdentificador()).getNombre()) == null){
+					InsertarSimbolo(((NodoIdentificador)vector.getIdentificador()).getNombre(), -1);
+					this.direccion += direccionesReservadas-1;
+				}else{
+					throw new Exception("El vector "+((NodoIdentificador)vector.getIdentificador()).getNombre()+" ya esta declarado");
+				}
+			}
+			else{
+				String identificador = ((NodoIdentificador)vector.getIdentificador()).getNombre();
+				RegistroSimbolo simbolo = BuscarSimbolo(identificador);
+				if (simbolo == null){ throw new Exception("El vector "+((NodoIdentificador)vector.getIdentificador()).getNombre()+" no esta esta declarado");}
+				cargarTabla(vector.getExpresion());
+			}
+			//
+		}
 
 	    /* Hago el recorrido recursivo */
 	    if (raiz instanceof  NodoIf){
@@ -43,8 +64,16 @@ public class TablaSimbolos {
 			cargarTabla(((NodoFor)raiz).getCuerpo());
 			cargarTabla(((NodoFor)raiz).getAsignaT());
 		}
-	    else if (raiz instanceof  NodoAsignacion)
-	    	cargarTabla(((NodoAsignacion)raiz).getExpresion());
+	    else if (raiz instanceof  NodoAsignacionSimple)
+	    	cargarTabla(((NodoAsignacionSimple)raiz).getExpresion());
+		else if (raiz instanceof  NodoAsignacionComplex){
+	    	cargarTabla(((NodoAsignacionComplex)raiz).getExpresion());	
+			if (((NodoAsignacionComplex) raiz).getIdentificador() instanceof NodoIdentificador) {
+				InsertarSimbolo(((NodoIdentificador) ((NodoAsignacionComplex) raiz).getIdentificador()).getNombre(), -1);
+			} else {
+				cargarTabla(((NodoAsignacionComplex) raiz).getIdentificador());
+			}
+		}
 	    else if (raiz instanceof  NodoEscribir)
 	    	cargarTabla(((NodoEscribir)raiz).getExpresion());
 	    else if (raiz instanceof NodoOperacion){

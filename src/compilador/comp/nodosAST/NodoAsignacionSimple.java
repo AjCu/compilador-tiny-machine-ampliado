@@ -1,16 +1,16 @@
 package comp.nodosAST;
 
-public class NodoAsignacion extends NodoBase {
+public class NodoAsignacionSimple extends NodoBase {
 	private String identificador;
 	private NodoBase expresion;
 	
-	public NodoAsignacion(String identificador) {
+	public NodoAsignacionSimple(String identificador) {
 		super();
 		this.identificador = identificador;
 		this.expresion = null;
 	}
 	
-	public NodoAsignacion(String identificador, NodoBase expresion) {
+	public NodoAsignacionSimple(String identificador, NodoBase expresion) {
 		super();
 		this.identificador = identificador;
 		this.expresion = expresion;
