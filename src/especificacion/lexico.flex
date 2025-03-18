@@ -52,6 +52,7 @@ letra			= [a-zA-Z]
 identificador	= {letra}+
 varInt           = (int|INT)
 varBool           = (boolean|BOOLEAN)
+varVector           = (vector|VECTOR)
 nuevalinea		= \n | \n\r | \r\n
 espacio		= [ \t]+
 %%
@@ -133,9 +134,18 @@ espacio		= [ \t]+
 ")"             {	if(debug) System.out.println("token RPAREN");
 			return sf.newSymbol("RPAREN",sym.RPAREN);
 			}
+"["             {	if(debug) System.out.println("token LBRACKET");
+			return sf.newSymbol("LBRACKET",sym.LBRACKET);
+			}
+"]"             {	if(debug) System.out.println("token RBRACKET");
+			return sf.newSymbol("RBRACKET",sym.RBRACKET);
+			}
 ";"             {	if(debug) System.out.println("token SEMI");
 			return sf.newSymbol("SEMI",sym.SEMI);
 			}
+{varVector} 		{	if(debug) System.out.println("token VECTOR");
+			return sf.newSymbol("VECTOR",sym.VECTOR);
+			}				
 {numero}        {	if(debug) System.out.println("token NUM");
 			return sf.newSymbol("NUM",sym.NUM,new String(yytext()));
 			}

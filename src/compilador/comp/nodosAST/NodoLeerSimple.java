@@ -1,14 +1,14 @@
 package comp.nodosAST;
 
-public class NodoLeer extends NodoBase {
+public class NodoLeerSimple extends NodoBase {
 	private String id;
 
-	public NodoLeer(String identificador) {
+	public NodoLeerSimple(String identificador) {
 		super();
 		this.id = identificador;
 	}
 
-	public NodoLeer() {
+	public NodoLeerSimple() {
 		super();
 		id="";
 	}

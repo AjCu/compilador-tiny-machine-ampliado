@@ -2,9 +2,9 @@
 1:       ST       0,0(0)      limpio el registro de la localidad 0
 *      -> asignacion
 *      -> constante
-2:       LDC       0,0(0)      cargar constante: 99
+2:       LDC       0,99(0)      cargar constante: 99
 *      <- constante
-3:       ST       0,0(5)      asignacion: almaceno el valor para el id x
+3:       ST       0,0(5)      asignacion simple: almaceno el valor para el id x
 *      <- asignacion
 *      -> if
 *      -> Operacion: and

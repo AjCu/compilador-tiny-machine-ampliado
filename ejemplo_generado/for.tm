@@ -1,12 +1,10 @@
 0:       LD       6,0(0)      cargar la maxima direccion desde la localidad 0
 1:       ST       0,0(0)      limpio el registro de la localidad 0
 *      -> for
-*      -> asignacion
 *      -> constante
 2:       LDC       0,0(0)      cargar constante: 0
 *      <- constante
-3:       ST       0,0(5)      asignacion: almaceno el valor para el id y
-*      <- asignacion
+3:       ST       0,0(5)      asignacion: almaceno el valor para el id comp.nodosAST.NodoIdentificador@4edde6e5
 *      -> Operacion: menor
 *      -> identificador
 4:       LD       0,0(5)      cargar valor de identificador: y
@@ -28,7 +26,6 @@
 *      -> identificador
 15:       OUT       0,0,0      escribir: genero la salida de la expresion
 *      <- escribir
-*      -> asignacion
 *      -> Operacion: mas
 *      -> identificador
 16:       LD       0,0(5)      cargar valor de identificador: y
@@ -40,8 +37,7 @@
 19:       LD       1,0(6)      op: pop o cargo de la pila el valor izquierdo en AC1
 20:       ADD       0,1,0      op: +
 *      <- Operacion: mas
-21:       ST       0,0(5)      asignacion: almaceno el valor para el id y
-*      <- asignacion
+21:       ST       0,0(5)      asignacion: almaceno el valor para el id comp.nodosAST.NodoIdentificador@70177ecd
 22:       LDA       7,-19(7)      for: jmp hacia el inicio
 13:       JEQ       0,9(7)      for: jmp hacia el final
 *      Fin de la ejecucion.

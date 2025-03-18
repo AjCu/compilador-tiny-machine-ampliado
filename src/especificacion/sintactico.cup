@@ -84,9 +84,12 @@ terminal TIMES;
 terminal OVER;
 terminal LPAREN;
 terminal RPAREN;
+terminal LBRACKET;
+terminal RBRACKET;
 terminal SEMI;
 terminal VARINT;
 terminal VARBOOL;
+terminal VECTOR;
 
 
 /* Simbolos No Terminales */
@@ -105,6 +108,8 @@ non terminal NodoBase exp_not;
 non terminal NodoBase simple_exp;
 non terminal NodoBase term;
 non terminal NodoBase factor;
+non terminal NodoBase iden;
+non terminal NodoBase decl_vect;
 
 /* Precedencia de operadores */
 precedence left PLUS;
@@ -153,7 +158,10 @@ stmt        ::= if_stmt:sif	{: if(debug) System.out.println("\t regla 3a");
             | write_stmt:sesc	{: if(debug) System.out.println("\t regla 3f"); 
 					RESULT=sesc;
 					:}
-            | error	{: if(debug) System.out.println("\t regla 3g"); 
+            | decl_vect:deve	{: if(debug) System.out.println("\t regla 3g"); 
+					RESULT=deve;
+					:}
+            | error	{: if(debug) System.out.println("\t regla 3h"); 
 				System.out.println("Ocurrio error en cup # 0004");
 				RESULT=null;
 				:}
@@ -178,31 +186,23 @@ for_stmt ::= FOR assign_stmt:asignap SEMI exp:prueba SEMI assign_stmt:asignat SE
   					:}
    		;
 
-assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regla 7 variable INT");
+assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regla 7 variante INT");
                 				table.put(variable,variable);
                 				:}
-                    |VARINT:var ID:variable ASSIGN exp_log:ex {:
+                    | VARINT:var ID:variable ASSIGN exp_log:ex {:
                             if(debug) System.out.println("\t regla 7 variable INT parte final");
                             if(variable!=null){
                             table.put(variable,variable);
-                            RESULT = new NodoAsignacion(variable.toString(),ex);
+                            RESULT = new NodoAsignacionSimple(variable.toString(),ex);
                             }
                             else{
                             RESULT = null;
                             System.out.println("Ocurrio error en cup # 0001");
                             }
                     :}
-					| ID:variable 	{: if(debug) System.out.println("\t regla 7 parte del medio "+ table.get(variable));
-				            String value = (String) table.get(variable);
-                            if(value == null){
-                                syntax_error(variable);
-                            	System.out.println("Variable no declarada");
-                            	RESULT = null;
-                            }
-					:}
-					ASSIGN exp:ex	{: if(debug) System.out.println("\t regla 7 parte final");
+					| iden:variable ASSIGN exp:ex	{: if(debug) System.out.println("\t regla 7 variante vector u otros");
 							if(variable!=null)
-							RESULT = new NodoAsignacion(variable.toString(),ex);
+							RESULT = new NodoAsignacionComplex(variable,ex);
 							else{
 							RESULT = null;
 							System.out.println("Ocurrio error en cup # 0001");
@@ -210,10 +210,10 @@ assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regl
 					:}
 		;
 
-read_stmt   ::= READ ID:variable	{: if(debug) System.out.println("\t regla 8"); 
+read_stmt   ::= READ iden:variable	{: if(debug) System.out.println("\t regla 8"); 
 					System.out.println("Leyendo Variable");
 					if(variable!=null)
-					RESULT = new NodoLeer(variable.toString());
+					RESULT = new NodoLeerSimple(variable.toString());
 					else{
 					RESULT = null;
 					System.out.println("Ocurrio error en cup # 0002");
@@ -295,8 +295,8 @@ term        ::= term:exI TIMES factor:exD	{: if(debug) System.out.println("\t re
 
 factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 13a"); 
 							RESULT = ex;
-							:}
-		| NUM:valor	{: if(debug) System.out.println("\t regla 13b"); 
+							:}			
+		| NUM:valor	{: if(debug) System.out.println("\t regla 13c"); 
 					System.out.println("Devolvi nodo numero entero");
 					if(valor!=null){
 						RESULT= new NodoValor(Integer.parseInt(valor));
@@ -305,17 +305,43 @@ factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 1
 						System.out.println("Ocurrio error en cup # 0005");
 					}
 					:}
-		| ID:variable	{: if(debug) System.out.println("\t regla 13c"); 
-					if(variable!=null){
-						System.out.println("Construyendo Nodo ID para Lexema: "+ variable.toString());
-						RESULT= new NodoIdentificador(variable.toString());		
-					}else{
-						RESULT = null;
-						System.out.println("Ocurrio error en cup # 0005");
-					}
-					:}
-		| error	{: if(debug) System.out.println("\t regla 13d"); 
+		| iden:id   {: if(debug) System.out.println("\t regla 13c");
+					RESULT = id;
+					:}			
+		| error	{: if(debug) System.out.println("\t regla 13e"); 
 				System.out.println("Ocurrio error en cup # 0003");
 				RESULT=null;
 				:}
 		;
+
+iden ::= ID:variable LBRACKET simple_exp:ex RBRACKET  {:  if(debug) System.out.println("\t regla 14a");
+							if (variable != null && ex != null)
+								RESULT = new NodoVector(new NodoIdentificador(variable.toString()),ex);
+							else{
+								RESULT = null;
+								System.out.println("Ocurrio error en cup # 0005");
+							}
+						:}
+        | ID:variable {:    if(debug) System.out.println("\t regla 14b");
+                            if(variable!=null){
+                                System.out.println("Construyendo Nodo ID para Lexema: "+ variable.toString());
+                                RESULT= new NodoIdentificador(variable.toString());
+                            }else{
+                                RESULT = null;
+                                System.out.println("Ocurrio error en cup # 0005");
+                            }
+                        :}
+;
+
+decl_vect ::= VECTOR ID:id NUM:num  {:  if(debug) System.out.println("\t regla 14a");
+                                        if (id != null && num != null){
+                                         NodoVector vector = new NodoVector(new NodoIdentificador(id.toString()),new NodoValor(Integer.parseInt(num)));
+                                        vector.setDeclaracion(true);
+                                        System.out.println("Devuelve un nodo vector");
+                                        RESULT = vector;
+                                        }else{
+                                            RESULT = null;
+                                            System.out.println("Ocurrio error en cup # 00017");
+                                        }
+                                    :}
+;
