@@ -73,7 +73,7 @@ public class Generador {
 		}else if (nodo instanceof  NodoLeerSimple){
 			generarLeerSimple(nodo);
 		}else if (nodo instanceof  NodoLeerComplex){
-			generarAsignacionComplex(nodo);
+			generarLeerComplex(nodo);
 		}else if (nodo instanceof  NodoEscribir){
 			generarEscribir(nodo);
 		}else if (nodo instanceof NodoValor){
@@ -216,7 +216,7 @@ public class Generador {
 			int direccion = tablaSimbolos.getDireccion(id.getNombre());
 			UtGen.emitirRM("LDA", UtGen.AC, direccion, UtGen.GP, "cargar direccion de identificador: " + id.getNombre());
 			UtGen.emitirRO("IN", UtGen.AC, 0, 0, "leer el valor para el identificador " + id.getNombre());
-			UtGen.emitirRM("RDI", UtGen.AC, direccion, UtGen.GP, "almacenar el valor leido en el identificador " + id.getNombre());
+			UtGen.emitirRM("ST", UtGen.AC, direccion, UtGen.GP, "almacenar el valor leido en el identificador " + id.getNombre());
 		} else if (n.getIdentificador() instanceof NodoVector) {
 			NodoVector vector = (NodoVector) n.getIdentificador();
 			NodoIdentificador id = (NodoIdentificador) vector.getIdentificador();

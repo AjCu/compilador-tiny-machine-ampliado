@@ -8,42 +8,41 @@ package comp;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int LBRACKET = 30;
-  public static final int OVER = 27;
-  public static final int GE = 19;
-  public static final int LPAREN = 28;
-  public static final int SEMI = 32;
-  public static final int REPEAT = 6;
-  public static final int FOR = 8;
-  public static final int MINUS = 25;
-  public static final int WRITE = 11;
-  public static final int RPAREN = 29;
-  public static final int NOT = 23;
-  public static final int AND = 21;
-  public static final int LT = 16;
-  public static final int OR = 22;
-  public static final int ENDFOR = 9;
-  public static final int UNTIL = 7;
-  public static final int NUM = 13;
-  public static final int PLUS = 24;
-  public static final int ASSIGN = 14;
-  public static final int IF = 2;
-  public static final int ID = 12;
-  public static final int VARINT = 33;
-  public static final int LE = 18;
-  public static final int EOF = 0;
-  public static final int RBRACKET = 31;
-  public static final int error = 1;
-  public static final int EQ = 15;
-  public static final int VECTOR = 35;
-  public static final int TIMES = 26;
-  public static final int VARBOOL = 34;
+  public static final int TIMES = 25;
+  public static final int AND = 20;
+  public static final int READ = 9;
+  public static final int OVER = 26;
+  public static final int NE = 19;
+  public static final int LT = 15;
   public static final int ELSE = 4;
-  public static final int READ = 10;
+  public static final int VARBOOL = 33;
+  public static final int PLUS = 23;
+  public static final int RPAREN = 28;
+  public static final int OR = 21;
   public static final int THEN = 3;
-  public static final int NE = 20;
+  public static final int SEMI = 31;
+  public static final int NOT = 22;
   public static final int END = 5;
-  public static final int GT = 17;
+  public static final int IF = 2;
+  public static final int LBRACKET = 29;
+  public static final int LPAREN = 27;
+  public static final int GT = 16;
+  public static final int LE = 17;
+  public static final int WRITE = 10;
+  public static final int ID = 11;
+  public static final int RBRACKET = 30;
+  public static final int NUM = 12;
+  public static final int EOF = 0;
+  public static final int VECTOR = 34;
+  public static final int MINUS = 24;
+  public static final int GE = 18;
+  public static final int error = 1;
+  public static final int UNTIL = 7;
+  public static final int ASSIGN = 13;
+  public static final int EQ = 14;
+  public static final int FOR = 8;
+  public static final int VARINT = 32;
+  public static final int REPEAT = 6;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -54,7 +53,6 @@ public class sym {
   "REPEAT",
   "UNTIL",
   "FOR",
-  "ENDFOR",
   "READ",
   "WRITE",
   "ID",

@@ -1,0 +1,7 @@
+boolean a:=true;
+boolean b:=false;
+if a=b then
+  write 1
+else
+  write 0
+end

@@ -1,0 +1,5 @@
+b:=2*2;
+c:=1;
+
+write c;
+write b;
