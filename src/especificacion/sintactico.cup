@@ -188,7 +188,7 @@ for_stmt ::= FOR assign_stmt:asignap SEMI exp:prueba SEMI assign_stmt:asignat SE
 assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regla 7a varint");
                 				table.put(variable,variable);
                 				:}
-                    | VARINT:var ID:variable ASSIGN exp_log:ex {:
+                    | VARINT:var ID:variable ASSIGN term:ex {:
                             if(debug) System.out.println("\t regla 7b varint");
                             if(variable!=null){
                             table.put(variable,variable);
