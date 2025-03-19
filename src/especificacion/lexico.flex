@@ -76,10 +76,7 @@ espacio		= [ \t]+
 			}
 "for"             {	if(debug) System.out.println("token FOR");
             return sf.newSymbol("FOR",sym.FOR);
-            }
-"endfor"         {	if(debug) System.out.println("token ENDFOR");
-                        return sf.newSymbol("ENDFOR",sym.ENDFOR);
-            }			
+            }		
 "read"          {	if(debug) System.out.println("token READ");
 			return sf.newSymbol("READ",sym.READ);
 			}
@@ -151,7 +148,7 @@ espacio		= [ \t]+
 			}
 {varInt}        {	if(debug) System.out.println("token VARINT");
 			return sf.newSymbol("VARINT",sym.VARINT,new String(yytext()));
-			}
+			}		
 {varBool}        {	if(debug) System.out.println("token VARBOOL");
 			return sf.newSymbol("VARBOOL",sym.VARBOOL,new String(yytext()));
 			}			

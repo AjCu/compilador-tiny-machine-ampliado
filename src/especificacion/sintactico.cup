@@ -63,7 +63,6 @@ terminal END;
 terminal REPEAT;
 terminal UNTIL;
 terminal FOR;
-terminal ENDFOR;
 terminal READ;
 terminal WRITE;
 terminal String ID;
@@ -200,6 +199,20 @@ assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regl
                             System.out.println("Ocurrio error en cup # 0001");
                             }
                     :}
+					| VARBOOL:var ID:variable 	{: if(debug) System.out.println("\t regla 7b varbool");
+                				table.put(variable,variable);
+                				:}
+                    | VARBOOL:var ID:variable ASSIGN exp_log:ex {:
+                            if(debug) System.out.println("\t regla 7b varbool con asignacion");
+                            if(variable!=null){
+                            table.put(variable,variable);
+                            RESULT = new NodoAsignacionSimple(variable.toString(),ex);
+                            }
+                            else{
+                            RESULT = null;
+                            System.out.println("Ocurrio error en cup # 0001");
+                            }
+                    :}
 					| iden:variable ASSIGN exp:ex	{: if(debug) System.out.println("\t regla 7c identificador");
 							if(variable!=null)
 							RESULT = new NodoAsignacionComplex(variable,ex);
@@ -213,7 +226,7 @@ assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regl
 read_stmt   ::= READ iden:variable	{: if(debug) System.out.println("\t regla 8 read"); 
 					System.out.println("Leyendo Variable");
 					if(variable!=null)
-					RESULT = new NodoLeerSimple(variable.toString());
+					RESULT = new NodoLeerComplex(variable);
 					else{
 					RESULT = null;
 					System.out.println("Ocurrio error en cup # 0002");
@@ -324,9 +337,15 @@ iden ::= ID:variable LBRACKET simple_exp:ex RBRACKET  {:  if(debug) System.out.p
 						:}
         | ID:variable {:    if(debug) System.out.println("\t regla 16b VARIABLE");
                             if(variable!=null){
-                                System.out.println("Construyendo Nodo ID para Lexema: "+ variable.toString());
-                                RESULT= new NodoIdentificador(variable.toString());
-                            }else{
+								 if(variable.toString().equals("true")) {
+									RESULT = new NodoValor(1);
+								} else if(variable.toString().equals("false")) {
+									RESULT = new NodoValor(0);
+								}  else {
+									System.out.println("Construyendo Nodo ID para Lexema: "+ variable.toString());
+									RESULT= new NodoIdentificador(variable.toString());
+								}
+                            } else {
                                 RESULT = null;
                                 System.out.println("Ocurrio error en cup # 0005");
                             }
