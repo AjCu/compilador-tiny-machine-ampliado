@@ -186,11 +186,11 @@ for_stmt ::= FOR assign_stmt:asignap SEMI exp:prueba SEMI assign_stmt:asignat SE
   					:}
    		;
 
-assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regla 7 variante INT");
+assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regla 7a varint");
                 				table.put(variable,variable);
                 				:}
                     | VARINT:var ID:variable ASSIGN exp_log:ex {:
-                            if(debug) System.out.println("\t regla 7 variable INT parte final");
+                            if(debug) System.out.println("\t regla 7b varint");
                             if(variable!=null){
                             table.put(variable,variable);
                             RESULT = new NodoAsignacionSimple(variable.toString(),ex);
@@ -200,7 +200,7 @@ assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regl
                             System.out.println("Ocurrio error en cup # 0001");
                             }
                     :}
-					| iden:variable ASSIGN exp:ex	{: if(debug) System.out.println("\t regla 7 variante vector u otros");
+					| iden:variable ASSIGN exp:ex	{: if(debug) System.out.println("\t regla 7c identificador");
 							if(variable!=null)
 							RESULT = new NodoAsignacionComplex(variable,ex);
 							else{
@@ -210,7 +210,7 @@ assign_stmt ::= VARINT:var ID:variable 	{: if(debug) System.out.println("\t regl
 					:}
 		;
 
-read_stmt   ::= READ iden:variable	{: if(debug) System.out.println("\t regla 8"); 
+read_stmt   ::= READ iden:variable	{: if(debug) System.out.println("\t regla 8 read"); 
 					System.out.println("Leyendo Variable");
 					if(variable!=null)
 					RESULT = new NodoLeerSimple(variable.toString());
@@ -221,18 +221,18 @@ read_stmt   ::= READ iden:variable	{: if(debug) System.out.println("\t regla 8")
 					:}
 		;
 
-write_stmt  ::= WRITE exp:ex	{: if(debug) System.out.println("\t regla 9"); 
+write_stmt  ::= WRITE exp:ex	{: if(debug) System.out.println("\t regla 9 write"); 
 					RESULT= new NodoEscribir(ex);
 					:}
 		;
 
 exp_log ::=
     exp_not:exI AND exp_log:exD {:
-            if(debug) System.out.println("\t regla exp_log logica AND");
+            if(debug) System.out.println("\t regla 10a op AND");
             RESULT = new NodoOperacion(exI, tipoOp.and, exD);
         :}
     | exp_not:exI OR exp_log:exD {:
-            if(debug) System.out.println("\t regla exp_log logica OR");
+            if(debug) System.out.println("\t regla 10b op OR");
             RESULT = new NodoOperacion(exI, tipoOp.or, exD);
         :}
     | exp_not:ex {: RESULT = ex; :}
@@ -240,63 +240,63 @@ exp_log ::=
 
 exp_not ::=
     NOT exp_not:ex {:
-            if(debug) System.out.println("\t regla exp_not");
+            if(debug) System.out.println("\t regla 11a op NOT");
            RESULT = new NodoOperacionNot(tipoOp.not, ex);
         :}
-    | exp:ex {: if(debug) System.out.println("\t regla exp");
+    | exp:ex {: if(debug) System.out.println("\t regla 11b exp");
             RESULT = ex;
         :}
 ;
 
-exp          ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println("\t regla 10a"); 
+exp          ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println("\t regla 12a LT"); 
 							RESULT = new NodoOperacion(exI,tipoOp.menor,exD);
 							:} 
-		| simple_exp:exI GT simple_exp:exD	{: if(debug) System.out.println("\t regla 10b"); 
+		| simple_exp:exI GT simple_exp:exD	{: if(debug) System.out.println("\t regla 12b GT"); 
 							RESULT = new NodoOperacion(exI,tipoOp.mayor,exD);
 							:}
-		| simple_exp:exI LE simple_exp:exD	{: if(debug) System.out.println("\t regla 10c"); 
+		| simple_exp:exI LE simple_exp:exD	{: if(debug) System.out.println("\t regla 12c LE"); 
 							RESULT = new NodoOperacion(exI,tipoOp.menorigual,exD);
 							:}
-		| simple_exp:exI GE simple_exp:exD	{: if(debug) System.out.println("\t regla 10d"); 
+		| simple_exp:exI GE simple_exp:exD	{: if(debug) System.out.println("\t regla 12d GE"); 
 							RESULT = new NodoOperacion(exI,tipoOp.mayorigual,exD);
 							:}
-		| simple_exp:exI NE simple_exp:exD	{: if(debug) System.out.println("\t regla 10e"); 
+		| simple_exp:exI NE simple_exp:exD	{: if(debug) System.out.println("\t regla 12e NE"); 
 							RESULT = new NodoOperacion(exI,tipoOp.diferente,exD);
 							:}
-		| simple_exp:exI EQ simple_exp:exD	{: if(debug) System.out.println("\t regla 10f"); 
+		| simple_exp:exI EQ simple_exp:exD	{: if(debug) System.out.println("\t regla 12f EQ"); 
 							RESULT = new NodoOperacion(exI,tipoOp.igual,exD);
 							:}
-		| simple_exp:ex	{: if(debug) System.out.println("\t regla 10j"); 
+		| simple_exp:ex	{: if(debug) System.out.println("\t regla 12j simple_exp"); 
 					RESULT = ex;
 					:}
 		;
 
-simple_exp  ::= simple_exp:exI PLUS term:exD	{: if(debug) System.out.println("\t regla 11a"); 
+simple_exp  ::= simple_exp:exI PLUS term:exD	{: if(debug) System.out.println("\t regla 13a PLUS"); 
 							RESULT = new NodoOperacion(exI,tipoOp.mas,exD);
 							:}
-		| simple_exp:exI MINUS term:exD	{: if(debug) System.out.println("\t regla 11b"); 
+		| simple_exp:exI MINUS term:exD	{: if(debug) System.out.println("\t regla 13b MINUS"); 
 							RESULT = new NodoOperacion(exI,tipoOp.menos,exD);
 							:}
-		| term:ex	{: if(debug) System.out.println("\t regla 11c"); 
+		| term:ex	{: if(debug) System.out.println("\t regla 13c term"); 
 				RESULT=ex;
 				:}
 		;
 
-term        ::= term:exI TIMES factor:exD	{: if(debug) System.out.println("\t regla 12a"); 
+term        ::= term:exI TIMES factor:exD	{: if(debug) System.out.println("\t regla 14a TIMES"); 
 							RESULT = new NodoOperacion(exI,tipoOp.por,exD);
 							:}
-		| term:exI OVER factor:exD	{: if(debug) System.out.println("\t regla 12b"); 
+		| term:exI OVER factor:exD	{: if(debug) System.out.println("\t regla 14b OVER"); 
 						RESULT = new NodoOperacion(exI,tipoOp.entre,exD);
 						:}
-		| factor:ex	{: if(debug) System.out.println("\t regla 12c"); 
+		| factor:ex	{: if(debug) System.out.println("\t regla 14c factor"); 
 					RESULT=ex;
 					:}
 		;
 
-factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 13a"); 
+factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 15a Parentesis"); 
 							RESULT = ex;
 							:}			
-		| NUM:valor	{: if(debug) System.out.println("\t regla 13c"); 
+		| NUM:valor	{: if(debug) System.out.println("\t regla 15b NUMERO"); 
 					System.out.println("Devolvi nodo numero entero");
 					if(valor!=null){
 						RESULT= new NodoValor(Integer.parseInt(valor));
@@ -305,16 +305,16 @@ factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 1
 						System.out.println("Ocurrio error en cup # 0005");
 					}
 					:}
-		| iden:id   {: if(debug) System.out.println("\t regla 13c");
+		| iden:id   {: if(debug) System.out.println("\t regla 15c identificador");
 					RESULT = id;
 					:}			
-		| error	{: if(debug) System.out.println("\t regla 13e"); 
+		| error	{: if(debug) System.out.println("\t regla 15e"); 
 				System.out.println("Ocurrio error en cup # 0003");
 				RESULT=null;
 				:}
 		;
 
-iden ::= ID:variable LBRACKET simple_exp:ex RBRACKET  {:  if(debug) System.out.println("\t regla 14a");
+iden ::= ID:variable LBRACKET simple_exp:ex RBRACKET  {:  if(debug) System.out.println("\t regla 16a VECTOR");
 							if (variable != null && ex != null)
 								RESULT = new NodoVector(new NodoIdentificador(variable.toString()),ex);
 							else{
@@ -322,7 +322,7 @@ iden ::= ID:variable LBRACKET simple_exp:ex RBRACKET  {:  if(debug) System.out.p
 								System.out.println("Ocurrio error en cup # 0005");
 							}
 						:}
-        | ID:variable {:    if(debug) System.out.println("\t regla 14b");
+        | ID:variable {:    if(debug) System.out.println("\t regla 16b VARIABLE");
                             if(variable!=null){
                                 System.out.println("Construyendo Nodo ID para Lexema: "+ variable.toString());
                                 RESULT= new NodoIdentificador(variable.toString());
@@ -333,7 +333,7 @@ iden ::= ID:variable LBRACKET simple_exp:ex RBRACKET  {:  if(debug) System.out.p
                         :}
 ;
 
-decl_vect ::= VECTOR ID:id NUM:num  {:  if(debug) System.out.println("\t regla 14a");
+decl_vect ::= VECTOR ID:id NUM:num  {:  if(debug) System.out.println("\t regla 17a INIT VECTOR");
                                         if (id != null && num != null){
                                          NodoVector vector = new NodoVector(new NodoIdentificador(id.toString()),new NodoValor(Integer.parseInt(num)));
                                         vector.setDeclaracion(true);
