@@ -112,7 +112,10 @@ espacio		= [ \t]+
 			}
 "NOT"           {	if(debug) System.out.println("token NOT");
 			return sf.newSymbol("NOT",sym.NOT);		
-			}			
+			}	
+"mod"           { if(debug) System.out.println("token MOD");
+          return sf.newSymbol("MOD",sym.MOD);	
+            }	
 "+"             {	if(debug) System.out.println("token PLUS");
 			return sf.newSymbol("PLUS",sym.PLUS);
 			}

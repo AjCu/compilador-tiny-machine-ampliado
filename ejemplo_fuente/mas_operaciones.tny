@@ -1,0 +1,9 @@
+x:= 2-1;
+y:= 4 / 2 ;
+
+if (x mod 2 <> 0) then
+    write 1
+else 
+    write 0
+end
+

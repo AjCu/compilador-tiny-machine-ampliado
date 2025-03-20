@@ -77,6 +77,7 @@ terminal NE;
 terminal AND;
 terminal OR;
 terminal NOT;
+terminal MOD;
 terminal PLUS;
 terminal MINUS;
 terminal TIMES;
@@ -301,7 +302,10 @@ term        ::= term:exI TIMES factor:exD	{: if(debug) System.out.println("\t re
 		| term:exI OVER factor:exD	{: if(debug) System.out.println("\t regla 14b OVER"); 
 						RESULT = new NodoOperacion(exI,tipoOp.entre,exD);
 						:}
-		| factor:ex	{: if(debug) System.out.println("\t regla 14c factor"); 
+		| term:exI MOD factor:exD	{: if(debug) System.out.println("\t regla 14c MOD"); 
+						RESULT = new NodoOperacion(exI,tipoOp.mod,exD);
+						:}
+		| factor:ex	{: if(debug) System.out.println("\t regla 14d factor"); 
 					RESULT=ex;
 					:}
 		;

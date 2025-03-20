@@ -1,0 +1,7 @@
+boolean factx:=false;
+boolean facty:=false;
+if factx=1 OR facty=1 then
+  write 1
+else
+  write 0
+end
