@@ -344,6 +344,20 @@ public class Generador {
 							UtGen.emitirRM("LDA", UtGen.PC, 1, UtGen.PC, "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)");
 							UtGen.emitirRM("LDC", UtGen.AC, 1, UtGen.AC, "caso de verdadero (AC=1)");
 						break;	
+			case    mod:
+						UtGen.emitirRM("ST", UtGen.AC1, 0, UtGen.GP, "guardo el valor AC1 (opizq) en la dirMem 0");
+						UtGen.emitirRM("ST", UtGen.AC, 1, UtGen.GP, "guardo el valor AC (opder) en la dirMem 1");
+						UtGen.emitirRO("DIV", UtGen.AC, UtGen.AC1, UtGen.AC, "operacion division y guarda en registro 0");
+						UtGen.emitirRM("ST", UtGen.AC, 2, UtGen.GP, "guardo el resultado que esta en reg 0 en la dirMem 2");
+						//Cargo el valor del opder en reg 1
+						UtGen.emitirRM("LD", UtGen.AC1, 1, UtGen.GP, "cargo en reg 1 (AC1) el valor en la dirMem 1");
+						//Multiplico el resultado de la division por el opder
+						UtGen.emitirRO("MUL", UtGen.AC, UtGen.AC1, UtGen.AC, "multiplicacion de valor de division por divisor");
+						//Cargo el valor de opizq guardado en la dirMem 0 en reg 1
+						UtGen.emitirRM("LD", UtGen.AC1, 0, UtGen.GP, "cargo valor AC1 en la dirMem 0");
+						//Resto el resultado de la multiplicacion con el opizq
+						UtGen.emitirRO("SUB", UtGen.AC, UtGen.AC1, UtGen.AC, "operacion resta de multiplicacion y valor anterior");
+						break;			
 			default:
 							UtGen.emitirComentario("BUG: tipo de operacion desconocida");
 		}
